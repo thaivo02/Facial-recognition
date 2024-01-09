@@ -1,2 +1,6 @@
 test_img/
 trained_models/
+age/_pycache_/
+ethnicity/_pycache_/
+gender/_pycache_/
+_pycache_/

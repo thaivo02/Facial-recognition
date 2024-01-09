@@ -10,11 +10,17 @@ from matplotlib import pyplot as plt
 def get_face(img):
     face_cascade = cv2.CascadeClassifier('./other_files/haarcascade_frontalface_default.xml')
     faces = face_cascade.detectMultiScale(img)
-    roi = img
+    
+    #if no faces are detected then return original img
+    if (len(faces) == 0):
+        return []
+
+    list_img = []
     for (x,y,w,h) in faces:
         # cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-        roi = img[y:y+w, x:x+h]
-    return roi
+        list_img.append(img[y:y+w, x:x+h])
+        #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    return list_img
     
 # cv2.imshow('img',roi)
 # cv2.waitKey(0)
