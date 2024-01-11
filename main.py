@@ -4,14 +4,13 @@ from age.age_train import train_age_model
 from age.age_predict import predict_age
 from ethnicity.ethnicity_train import train_race_model
 from ethnicity.ethnicity_predict import predict_race
+from skintone.skintone_train import train_skintone_model
+from skintone.skintone_predict import predict_skintone
 from balance_data.down_sapling import under_sampling
-from extract_frontface import get_face
+from extract_frontface import get_face, detect_skin_in_color
+from extract_skin import extractSkin
+import cv2
 
-# train_gender_model()
 
-path = r"C:\Users\ACER\AI\hackathon\test_img\\female4.jpg"
-#path = r"D:\\Python_project\\data\\73876047.jpg"
-predict_gender(path)
-
-# col = "gender"
-# under_sampling(col)
+# for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\test_oldman.jpg")):
+predict_skintone(r"D:\Python_project\data\84882983.jpg")
