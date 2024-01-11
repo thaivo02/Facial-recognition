@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import dlib
 
 # folder = "./test_img/"
 # img_path = 'selfie1.jpg'
@@ -8,26 +9,38 @@ from matplotlib import pyplot as plt
 
 """Using Haar Cascade to get face of image"""
 def get_face(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    #gray = cv2.equalizeHist(gray)
-    face_cascade = cv2.CascadeClassifier('./other_files/haarcascade_frontalface_default.xml')
-    faces = face_cascade.detectMultiScale(
-        gray,
-        scaleFactor=1.1,
-        minNeighbors=5,
-        flags=(cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT)
-    )
+    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # #gray = cv2.equalizeHist(gray)
+    # face_cascade = cv2.CascadeClassifier('./other_files/haarcascade_frontalface_default.xml')
+    # faces = face_cascade.detectMultiScale(
+    #     gray,
+    #     scaleFactor=1.1,
+    #     minNeighbors=5,
+    #     flags=(cv2.CASCADE_SCALE_IMAGE | cv2.CASCADE_FIND_BIGGEST_OBJECT)
+    # )
     
-    #if no faces are detected then return original img
-    if (len(faces) == 0):
-        return []
+    # #if no faces are detected then return original img
+    # if (len(faces) == 0):
+    #     return []
 
+    # list_img = []
+    # for (x,y,w,h) in faces:
+    #     # cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+    #     list_img.append(img[y:y+w, x:x+h]) if is_face((x,y,w,h), img) else 1
+    #     #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    # return list_img
+
+    #cnn_face_detector = dlib.cnn_face_detection_model_v1("other_files/mmod_human_face_detector.dat")
+    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    faces = dlib.get_frontal_face_detector()(rgb, 1)
+    print(faces)
     list_img = []
-    for (x,y,w,h) in faces:
-        # cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-        list_img.append(img[y:y+w, x:x+h]) if is_face((x,y,w,h), img) else 1
-        #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    for r in faces:
+        list_img.append(img[r.top():r.bottom(), r.left():r.right()])
+        #cv2.imshow('img',img[r.top():r.bottom(), r.left():r.right()])
+        #cv2.waitKey(0)
     return list_img
+        
 
 def is_face(face_coord, image, threshold=0.3):
     """

@@ -13,4 +13,6 @@ import cv2
 
 
 # for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\test_oldman.jpg")):
-predict_skintone(r"D:\Python_project\data\84882983.jpg")
+#get_face(cv2.imread(r"D:\Python_project\data\\84882983.jpg"))
+#get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\test1.jpg"))
+predict_skintone(r"D:\Python_project\data\2645861.jpg")
