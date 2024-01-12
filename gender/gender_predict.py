@@ -21,8 +21,7 @@ import glob
 gender_dict = {'Male':0, 'Female':1}
 age_dict = {'20-30s':0,'40-50s':1,'Baby':2,'Kid':3,'Senior':4,'Teenager':5}
 
-def predict_gender(path):
-    new_model = tf.keras.models.load_model('gender/models/pred_gender_model.keras')
+def predict_gender(img, model):
     # data = pd.read_csv("D:\Python_project\labels.csv", nrows=10000)
     # df = pd.DataFrame(data, columns=['file_name', 'gender', 'age'])
     # for ind  in df.index:
@@ -32,10 +31,9 @@ def predict_gender(path):
     #     print("Original Gender", df['gender'][ind])
     #     print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(gend)])
 
-    img = cv2.imread(path)
-    for i in get_face(img)[0]:
-        pred = new_model(np.array([cv2.resize(i, (64,64))]))
-        #print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))])
-        #cv2.imshow("img",i)
-        #cv2.waitKey(0)
-        return list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))]
+    
+    pred = model(img)
+    #print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))])
+    #cv2.imshow("img",i)
+    #cv2.waitKey(0)
+    return list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))]

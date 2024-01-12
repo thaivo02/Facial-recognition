@@ -20,8 +20,7 @@ import glob
 
 race_dict = {'Caucasian':0,'Mongoloid':1,'Negroid':2}
 
-def predict_race(path):
-    new_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
+def predict_race(img, model):
     # data = pd.read_csv("D:\Python_project\labels.csv", nrows=10000)
     # df = pd.DataFrame(data, columns=['file_name', 'age', 'age'])
     # for ind  in df.index:
@@ -31,10 +30,8 @@ def predict_race(path):
     #     print("Original age", df['age'][ind])
     #     print("Predict age:", list(age_dict.keys())[list(age_dict.values()).index(gend)])
 
-    img = cv2.imread(path)
-    for i in get_face(img)[0]:
-        pred = new_model(np.array([cv2.resize(i, (64,64))]))
-        #print("Predict race:", list(race_dict.keys())[list(race_dict.values()).index(np.argmax(pred[0]))])
-        #cv2.imshow("img",i)
-        #cv2.waitKey(0)
-        return list(race_dict.keys())[list(race_dict.values()).index(np.argmax(pred[0]))]
+    pred = model(img)
+    #print("Predict race:", list(race_dict.keys())[list(race_dict.values()).index(np.argmax(pred[0]))])
+    #cv2.imshow("img",i)
+    #cv2.waitKey(0)
+    return list(race_dict.keys())[list(race_dict.values()).index(np.argmax(pred[0]))]
