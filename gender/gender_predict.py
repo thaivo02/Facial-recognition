@@ -33,8 +33,9 @@ def predict_gender(path):
     #     print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(gend)])
 
     img = cv2.imread(path)
-    for i in get_face(img):
-        pred = new_model.predict(np.array([cv2.resize(i, (64,64))]))
-        print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))])
-        cv2.imshow("img",i)
-        cv2.waitKey(0)
+    for i in get_face(img)[0]:
+        pred = new_model(np.array([cv2.resize(i, (64,64))]))
+        #print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))])
+        #cv2.imshow("img",i)
+        #cv2.waitKey(0)
+        return list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))]

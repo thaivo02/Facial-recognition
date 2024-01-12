@@ -13,14 +13,14 @@ Categories =['dark', 'mid-dark', 'mid-light', 'light']
 def predict_skintone(path):
     
 #     # load
-    with open('skintone/models/pred_skintone_model.pkl', 'rb') as f:
-        model = pickle.load(f)
-    for i in get_face(extractSkin(cv2.imread(path))):
+    model = pickle.load(open('skintone/models/pred_skintone_model.pkl', 'rb'))
+    for i in get_face(extractSkin(cv2.imread(path)))[0]:
         #print(classify(i))
         l=[cv2.resize(i, (64,64)).flatten()] 
-        print("The predicted image is : "+model.predict(l)[0])
-        cv2.imshow("img", i)
-        cv2.waitKey(0)
+        #print("The predicted image is : "+model.predict(l)[0])
+        #cv2.imshow("img", i)
+        #cv2.waitKey(0)
+        return model.predict(l)[0]
 #     plt.imshow(img) 
 #     plt.show() 
     

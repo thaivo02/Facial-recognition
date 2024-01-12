@@ -7,6 +7,25 @@ import dlib
 # img_path = 'selfie1.jpg'
 # img = cv2.imread(folder+img_path)
 
+def convert_and_trim_bb(image, rect):
+	# extract the starting and ending (x, y)-coordinates of the
+	# bounding box
+	startX = rect.left()
+	startY = rect.top()
+	endX = rect.right()
+	endY = rect.bottom()
+	# ensure the bounding box coordinates fall within the spatial
+	# dimensions of the image
+	startX = max(0, startX)
+	startY = max(0, startY)
+	endX = min(endX, image.shape[1])
+	endY = min(endY, image.shape[0])
+	# compute the width and height of the bounding box
+	w = endX - startX
+	h = endY - startY
+	# return our bounding box coordinates
+	return [startX, startY, w, h]
+
 """Using Haar Cascade to get face of image"""
 def get_face(img):
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -33,13 +52,15 @@ def get_face(img):
     #cnn_face_detector = dlib.cnn_face_detection_model_v1("other_files/mmod_human_face_detector.dat")
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     faces = dlib.get_frontal_face_detector()(rgb, 1)
-    print(faces)
+    #print(faces)
     list_img = []
+    bbox = []
     for r in faces:
         list_img.append(img[r.top():r.bottom(), r.left():r.right()])
         #cv2.imshow('img',img[r.top():r.bottom(), r.left():r.right()])
         #cv2.waitKey(0)
-    return list_img
+        bbox.append(convert_and_trim_bb(rgb, r))
+    return list_img, bbox
         
 
 def is_face(face_coord, image, threshold=0.3):
