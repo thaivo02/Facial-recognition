@@ -11,6 +11,7 @@ from gender.gender_predict import predict_gender
 from age.age_predict import predict_age
 from ethnicity.ethnicity_predict import predict_race
 from skintone.skintone_predict import predict_skintone
+from mask.mask_predict import predict_mask
 from extract_frontface import get_face, detect_skin_in_color
 from extract_skin import extractSkin
 
@@ -23,6 +24,7 @@ def load_image_for_pred(folder_path):
     gender_model = tf.keras.models.load_model('gender/models/pred_gender_model.keras')
     race_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
     age_model = tf.keras.models.load_model('age/models/pred_age_model.keras')
+    mask_model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
 
     # Write header of csv
     with open(r"D:\Python_project\answer\answer.csv", 'w', newline='') as f_object:
@@ -37,21 +39,23 @@ def load_image_for_pred(folder_path):
 
                 path = os.path.join(folder_path,df['file_name'][ind])
                 img = cv2.imread(path)
-                for i in get_face(img)[0]:
+                face = get_face(img)
+                for i in face[0]:
                     print("Load image No." + str(data[df['file_name'][ind]]) + "; File: "+ path)
 
                     #file_name
                     csv_list.append(df['file_name'][ind])
 
                     # bounding box
-                    print("bbox: ", get_face(img)[1][0])
-                    csv_list.append(get_face(img)[1][0])
+                    print("bbox: ", face[1][0])
+                    csv_list.append(face[1][0])
 
                     # image id
                     print("image id: ", data[df['file_name'][ind]])
                     csv_list.append(data[df['file_name'][ind]])
 
                     img_resized = np.array([cv2.resize(i, (64,64))])
+                    img_resized_mask = np.array([cv2.resize(i, (128,128))])
 
                     # race predict
                     print("race: ", predict_race(img_resized, race_model))
@@ -70,8 +74,8 @@ def load_image_for_pred(folder_path):
                     csv_list.append(predict_gender(img_resized, gender_model))
                     print("skintone: ", predict_skintone(path))
                     csv_list.append(predict_skintone(path))
-                    print("masked: ", "unmasked")
-                    #csv_list.append(predict_mask(img_path))
+                    print("masked: ", predict_mask(img_resized_mask, mask_model))
+                    csv_list.append(predict_mask(img_resized_mask, mask_model))
                     csv_list.append("unmasked")
                 #writer_object = csv.writer(f_object)
                 #writer_object.writerow(csv_list)
