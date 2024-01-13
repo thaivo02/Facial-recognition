@@ -11,11 +11,31 @@ from PIL import Image
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+import cv2
 
 import warnings
 
 # Suppress deprecated optimizer warning
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="tensorflow")
+
+def load_images_from_folder(list_data):
+    df = pd.DataFrame(list_data, columns=['file_name'])
+    images = []
+    i = 0
+    for ind  in df.index:
+        print(i)
+        i = i + 1
+        try:
+            img = cv2.imread(os.path.join("data/train/",df['file_name'][ind]))
+        except:
+            img = cv2.imread(os.path.join("data/test/",df['file_name'][ind]))
+        
+        img = cv2.resize(img, (64,64))
+        # cv2.imshow("img",img)
+        # cv2.waitKey(0)
+        if img is not None:
+            images.append(img)
+    return np.array(images)
 
 
 IMG_HEIGHT = 64
@@ -29,9 +49,12 @@ labels = pd.read_csv("data/labels.csv")
 class_labels = labels["emotion"].unique()
 num_classes = len(class_labels)
 
-train_df, val_df = train_test_split(labels, test_size=0.2, random_state=42)
+emo_dict = {'Anger':0, 'Disgust':1, 'Fear':2, 'Happiness':3, 'Neutral':4, 'Sadness':5, 'Suprise': 6}
+x = load_images_from_folder(labels)
+y = labels['emotion'].replace(emo_dict)
+x_train, x_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=42)
 
-train_datagen = ImageDataGenerator(
+data_aug = ImageDataGenerator(
     rescale=1.0 / 255,
     rotation_range=30,
     shear_range=0.3,
@@ -40,7 +63,6 @@ train_datagen = ImageDataGenerator(
     fill_mode="nearest",
 )
 
-validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
 
 def load_and_preprocess_image(img_path, target_size):
@@ -172,7 +194,7 @@ for root, dirs, files in os.walk(test_path):
 epochs = 50
 
 history = model.fit(
-    train_generator,
+    data_aug.flow(x_train, y_train, batch_size=batch_size),,
     steps_per_epoch=num_train_imgs // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
