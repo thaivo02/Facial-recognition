@@ -4,8 +4,13 @@ import tensorflow as tf
 import cv2
 from keras.layers import Conv2D
 import keras.layers as L
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Flatten,BatchNormalization
+from tensorflow.keras.layers import Dense, MaxPooling2D,Conv2D, MaxPool2D
+from tensorflow.keras.layers import Input,Activation,Add
+from tensorflow.keras.models import Model
+from tensorflow.keras.regularizers import l2
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import os
@@ -13,76 +18,57 @@ from keras.preprocessing.image import ImageDataGenerator
 
 
 def load_images_from_folder(list_data):
-    file_name = pd.DataFrame(list_data, columns=["file_name"])
-    bbox = pd.DataFrame(list_data, columns=["bbox"])
+    df = pd.DataFrame(list_data, columns=['file_name'])
     images = []
     i = 0
-    for ind in file_name.index:
+    for ind  in df.index:
         print(i)
         i = i + 1
-        img = cv2.imread(os.path.join("data", file_name["file_name"][ind]))
-        crop_box = bbox["bbox"][ind][1:-1].split(", ")
-        print(file_name["file_name"][ind], crop_box)
-        img = img[
-            int(float(crop_box[1])) : int(float(crop_box[1])) + int(float(crop_box[3])),
-            int(float(crop_box[0])) : int(float(crop_box[0])) + int(float(crop_box[2])),
-        ]
-        img = cv2.resize(img, (128, 128))
+        img = cv2.imread(os.path.join("D:\\Python_project\\crop_img_data\\",df['file_name'][ind]))
+        
+        img = cv2.resize(img, (64,64))
+        # cv2.imshow("img",img)
+        # cv2.waitKey(0)
         if img is not None:
             images.append(img)
-    return np.array(images).astype("float32")
+    return np.array(images)
 
 
 def create_emotion_model():
-    # Create the model
-    model = Sequential()
+    input_shape=(64,64,3)
 
-    model.add(
-        Conv2D(32, kernel_size=(4, 4), activation="relu", input_shape=(128, 128, 3))
-    )
+    model=Sequential([
+                  Conv2D(64,3,activation='relu',kernel_initializer='he_normal',input_shape=(64,64,3)),
+                  MaxPooling2D(3),
+                  Conv2D(128,3,activation='relu',kernel_initializer='he_normal'),
+                  Conv2D(256,3,activation='relu',kernel_initializer='he_normal'),
+                  MaxPooling2D(3),
+                  Flatten(),
+                  Dense(256,activation='relu'),
+                  Dense(7,activation='softmax',kernel_initializer='glorot_normal')
+                  
+])
+    model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
-    model.add(Conv2D(64, kernel_size=(3, 3), activation="relu"))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.1))
-
-    model.add(Conv2D(128, kernel_size=(3, 3), activation="relu"))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.1))
-
-    model.add(Conv2D(256, kernel_size=(3, 3), activation="relu"))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.1))
-
-    model.add(Flatten())
-    model.add(Dense(512, activation="relu"))
-    model.add(Dropout(0.2))
-
-    model.add(Dense(7, activation="softmax"))
-
-    model.compile(loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     print(model.summary())
     return model
 
 
 def train_emotion_model(rows=0):
     data = (
-        pd.read_csv(r"labels.csv")
+        pd.read_csv(r"D:\Python_project\file_emotion.csv")
         if rows == 0
-        else pd.read_csv(r"labels.csv", nrows=rows)
+        else pd.read_csv(r"D:\Python_project\file_emotion.csv", nrows=rows)
     )
     pd.options.display.max_columns = None
-    emotions = sorted(set(data["emotion"]))
-    emotion_dict = {emotion: index for index, emotion in enumerate(emotions)}
-    print(emotion_dict)
+    emotion_dict = {'Anger':0,'Disgust':1,'Fear':2,'Happiness':3,'Neutral':4,'Sadness':5, 'Surprise': 6}
 
     y_emotion = data["emotion"].replace(emotion_dict)
     print("emotion: ", y_emotion)
     x = load_images_from_folder(data)
 
     print("start training")
-    x_emotion_train, x_emotion_test, y_emotion_train, y_emotion_test = train_test_split(
-        x, y_emotion, test_size=0.2, random_state=42
-    )
+    x_emotion_train, x_emotion_test, y_emotion_train, y_emotion_test = train_test_split(x, y_emotion, test_size=0.2, random_state=42)
     print(x.shape, y_emotion.shape)
 
     # construct the training image generator for data augmentation
@@ -98,10 +84,10 @@ def train_emotion_model(rows=0):
 
     model = create_emotion_model()
     history = model.fit(
-        aug.flow(x_emotion_train, y_emotion_train, batch_size=32),
+        x_emotion_train, y_emotion_train,
         validation_data=(x_emotion_train, y_emotion_train),
         batch_size=32,
-        epochs=15,
+        epochs=30,
         validation_split=0.2,
     )
 
@@ -124,6 +110,3 @@ def train_emotion_model(rows=0):
     plt.legend(["train", "val"], loc="upper left")
     plt.savefig("plot/emotion_CNN_plot_loss.png")
     plt.show()
-
-
-train_emotion_model()

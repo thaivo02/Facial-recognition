@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-data = pd.read_csv(r"labels.csv")
+data = pd.read_csv(r"D:\Python_project\labels.csv")
 emotions = sorted(set(data["emotion"]))
 emotion_dict = {emotion: index for index, emotion in enumerate(emotions)}
 

@@ -8,6 +8,8 @@ from skintone.skintone_train import train_skintone_model
 from skintone.skintone_predict import predict_skintone
 from mask.mask_train import train_mask_model
 from mask.mask_predict import predict_mask
+from emotion.emotion_train import train_emotion_model
+from emotion.emotion_predict import predict_emotion
 from balance_data.down_sapling import under_sampling
 from extract_frontface import get_face, detect_skin_in_color
 from extract_skin import extractSkin
@@ -17,17 +19,17 @@ import cv2
 import glob
 
 # # Balance data
-# under_sampling("masked")
+# under_sampling("emotion")
 
 # Train data
-# train_gender_model()
+# train_emotion_model()
 
 # Predict data
-model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
+model = tf.keras.models.load_model("emotion/models/pred_emotion_model.keras")
 # for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\masked.jpg")):
-for filename in glob.glob('D:\Python_project\data\\87285795.jpg'):
-    for i in get_face(cv2.imread(filename)):
-        img_resized = np.array([cv2.resize(i[0], (128,128))])
-        print(predict_mask(img_resized, model))
-        cv2.imshow("img", i[0])
-        cv2.waitKey(0)
+#for filename in glob.glob('D:\Python_project\data\\58837884.jpg'):
+for i in get_face(cv2.imread(r"D:\Python_project\data\97733947.jpg")):
+    img_resized = np.array([cv2.resize(i[0], (64,64))])
+    print(predict_emotion(img_resized,model))
+    cv2.imshow("img", i[0])
+    cv2.waitKey(0)
