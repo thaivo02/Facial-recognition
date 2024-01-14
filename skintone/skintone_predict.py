@@ -10,17 +10,18 @@ from colormath.color_diff import delta_e_cie2000
 from colormath.color_objects import sRGBColor, LabColor
 
 Categories =['dark', 'mid-dark', 'mid-light', 'light']
-def predict_skintone(path):
+def predict_skintone(img):
     
 #     # load
     model = pickle.load(open('skintone/models/pred_skintone_model.pkl', 'rb'))
-    for i in get_face(extractSkin(cv2.imread(path)))[0]:
+    #for i in extractSkin(img):
         #print(classify(i))
-        l=[cv2.resize(i, (64,64)).flatten()] 
+        #l=[extractSkin(img).flatten()] 
         #print("The predicted image is : "+model.predict(l)[0])
         #cv2.imshow("img", i)
         #cv2.waitKey(0)
-        return model.predict(l)[0]
+    return model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0]
+    #return (classify(extractSkin(img))['tone_label'])
 #     plt.imshow(img) 
 #     plt.show() 
     
@@ -65,10 +66,11 @@ def skin_tone(colors, percents, skin_tone_palette, tone_labels):
     lab_colors = [convert_color(sRGBColor(rgb_r=r, rgb_g=g, rgb_b=b, is_upscaled=True), LabColor) for b, g, r in colors]
     distances = [np.sum([delta_e_cie2000(c, label) * p for c, p in zip(lab_colors, percents)]) for label in lab_tones]
     tone_id = np.argmin(distances)
-    distance: float = distances[tone_id]
-    tone_hex = skin_tone_palette[tone_id].upper()
+    #distance: float = distances[tone_id]
+    #tone_hex = skin_tone_palette[tone_id].upper()
     tone_label = tone_labels[tone_id]
-    return tone_id, tone_hex, tone_label, distance
+    #return tone_id, tone_hex, tone_label, distance
+    return tone_label
 
 def classify(
     image,
@@ -97,9 +99,10 @@ def classify(
     # result = {"dominant_colors": [{"color": color, "percent": pct} for color, pct in zip(hex_colors, pct_strs)]}
     result = {}
     # Calculate skin tone
-    tone_id, tone_hex, tone_label, distance = skin_tone(dmnt_colors, dmnt_pcts, skin_tone_palette, tone_labels)
-    accuracy = round(100 - distance, 2)
+    #tone_id, tone_hex, tone_label, distance = skin_tone(dmnt_colors, dmnt_pcts, skin_tone_palette, tone_labels)
+    tone_label = skin_tone(dmnt_colors, dmnt_pcts, skin_tone_palette, tone_labels)
+    #accuracy = round(100 - distance, 2)
     #result["skin_tone"] = tone_hex
     result["tone_label"] = tone_label
-    result["accuracy"] = accuracy
+    #result["accuracy"] = accuracy
     return result

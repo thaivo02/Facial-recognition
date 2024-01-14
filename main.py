@@ -20,14 +20,14 @@ import glob
 # under_sampling("masked")
 
 # Train data
-# train_mask_model()
+# train_mask_model(10)
 
 # Predict data
-model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
-for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\masked.jpg"))[0]:
-# for filename in glob.glob('D:\Python_project\data\*.jpg'):
-#     for i in get_face(cv2.imread(filename))[0]:
-        img_resized = np.array([cv2.resize(i, (128,128))])
-        print(predict_mask(img_resized, model))
-        cv2.imshow("img", i)
-        cv2.waitKey(0)
+# model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
+# for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\masked.jpg"))[0]:
+# # for filename in glob.glob('D:\Python_project\data\*.jpg'):
+# #     for i in get_face(cv2.imread(filename))[0]:
+#         img_resized = np.array([cv2.resize(i, (128,128))])
+#         print(predict_mask(img_resized, model))
+#         cv2.imshow("img", i)
+#         cv2.waitKey(0)

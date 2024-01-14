@@ -72,8 +72,8 @@ def load_image_for_pred(folder_path):
 
                     print("gender: ", predict_gender(img_resized, gender_model))
                     csv_list.append(predict_gender(img_resized, gender_model))
-                    print("skintone: ", predict_skintone(path))
-                    csv_list.append(predict_skintone(path))
+                    print("skintone: ", predict_skintone(i))
+                    csv_list.append(predict_skintone(i))
                     print("masked: ", predict_mask(img_resized_mask, mask_model))
                     csv_list.append(predict_mask(img_resized_mask, mask_model))
                     csv_list.append("unmasked")
