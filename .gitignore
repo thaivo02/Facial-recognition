@@ -6,3 +6,5 @@ labels.csv
 __pycache__
 .vscode
 .gitattributes
+test_img/
+trained_models/
