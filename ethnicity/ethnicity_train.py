@@ -45,7 +45,7 @@ def conv_block(inp, filters=32, bn=True, pool=True):
 
 def create_race_model():
     # CNN Architecture Used is similar to VGG-16
-    inp = Input(shape=(64, 64, 3,))
+    inp = Input(shape=(64, 64, 3))
 
     net = Conv2D(filters=16, strides=(2,2), kernel_size=(3,3))(inp)
     net = BatchNormalization()(net)
