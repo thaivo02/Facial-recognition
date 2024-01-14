@@ -50,17 +50,17 @@ def get_face(img):
     # return list_img
 
     #cnn_face_detector = dlib.cnn_face_detection_model_v1("other_files/mmod_human_face_detector.dat")
-    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    faces = dlib.get_frontal_face_detector()(rgb, 1)
+    #rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    faces = dlib.get_frontal_face_detector()(img, 1)
     #print(faces)
     list_img = []
-    bbox = []
+    #bbox = []
     for r in faces:
-        list_img.append(img[r.top():r.bottom(), r.left():r.right()])
+        list_img.append([img[r.top():r.bottom(), r.left():r.right()], convert_and_trim_bb(img, r)])
         #cv2.imshow('img',img[r.top():r.bottom(), r.left():r.right()])
         #cv2.waitKey(0)
-        bbox.append(convert_and_trim_bb(rgb, r))
-    return list_img, bbox
+        #bbox.append(convert_and_trim_bb(img, r))
+    return list_img
         
 
 def is_face(face_coord, image, threshold=0.3):

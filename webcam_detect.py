@@ -16,7 +16,7 @@ cam = cv2.VideoCapture(0)
 color_green = (0,255,0)
 line_width = 3
 # Modify display
-font_size = 0.5
+font_size = 0.3
 font_thickness = 1
 font_color = (36,255,12)
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -38,20 +38,23 @@ while True:
     fps = 1/(new_frame_time-prev_frame_time) 
     prev_frame_time = new_frame_time 
 
-    cv2.putText(img, "FPS: " +str(fps) , (0, 0),font, font_size, font_color, font_thickness)
-    faces = get_face(img)
-    for face in faces[1]:
-        x = face[0]
-        y = face[1]
-        cv2.rectangle(img,(face[0], face[1]), (face[0]+face[2], face[1]+face[3]), color_green, line_width)
-    for i in faces[0]:
-        # Predict
-        img_resized = np.array([cv2.resize(i, (64,64))])
-        cv2.putText(img,"Race: "+predict_race(img_resized, race_model), (x, y-10), font, font_size, font_color, font_thickness)
-        cv2.putText(img,"Age: "+predict_age(img_resized, age_model), (x, y-20), font, font_size, font_color, font_thickness)
-        cv2.putText(img,"Gender: "+predict_gender(img_resized, gender_model), (x, y-30), font, font_size, font_color, font_thickness)
-        cv2.putText(img,"Skintone: "+predict_skintone(i), (x, y-40), font, font_size, font_color, font_thickness)
-        cv2.putText(img,"Mask: "+predict_mask(np.array([cv2.resize(i, (128,128))]), mask_model), (x, y-50), font, font_size, font_color, font_thickness)
+    cv2.putText(img, "FPS: " +str(fps) , (0, 20),font, font_size, font_color, font_thickness)
+    for face in get_face(img):
+        try:
+            x = face[1][0]
+            y = face[1][1]
+            w = face[1][2]
+            h = face[1][3]
+            cv2.rectangle(img,(x, y), (x+w, y+h), color_green, line_width)
+            # Predict
+            img_resized = np.array([cv2.resize(face[0], (64,64))])
+            cv2.putText(img,"Race: "+predict_race(img_resized, race_model), (x, y-10), font, font_size, font_color, font_thickness)
+            cv2.putText(img,"Age: "+predict_age(img_resized, age_model), (x, y-20), font, font_size, font_color, font_thickness)
+            cv2.putText(img,"Gender: "+predict_gender(img_resized, gender_model), (x, y-30), font, font_size, font_color, font_thickness)
+            cv2.putText(img,"Skintone: "+predict_skintone(face[0]), (x, y-40), font, font_size, font_color, font_thickness)
+            cv2.putText(img,"Mask: "+predict_mask(np.array([cv2.resize(face[0], (128,128))]), mask_model), (x, y-50), font, font_size, font_color, font_thickness)
+        except Exception as e:
+            print(e)
     cv2.imshow('my webcam', img)
     if cv2.waitKey(1) == 27:
         break  # esc to quit

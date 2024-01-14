@@ -66,7 +66,7 @@ def extractSkin(image):
     skin_mask = cv2.inRange(img, low_hsv, high_hsv)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     skin_mask = cv2.morphologyEx(skin_mask, cv2.MORPH_OPEN, kernel)
-    skin_mask = cv2.morphologyEx(skin_mask, cv2.MORPH_CLOSE, kernel)
+    #skin_mask = cv2.morphologyEx(skin_mask, cv2.MORPH_CLOSE, kernel)
     skin_mask = cv2.GaussianBlur(skin_mask, ksize=(3, 3), sigmaX=0)
 
     skin = cv2.bitwise_and(image, image, mask=skin_mask)
