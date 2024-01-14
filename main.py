@@ -20,7 +20,7 @@ import glob
 # under_sampling("masked")
 
 # Train data
-# train_mask_model(10)
+train_gender_model()
 
 # Predict data
 # model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
