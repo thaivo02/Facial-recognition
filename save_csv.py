@@ -78,8 +78,8 @@ def load_image_for_pred(folder_path):
                     csv_list.append(predict_skintone(face[0]))
                     print("masked: ", predict_mask(img_resized_mask, mask_model))
                     csv_list.append(predict_mask(img_resized_mask, mask_model))
-                    #writer_object = csv.writer(f_object)
-                    #writer_object.writerow(csv_list)
+                    writer_object = csv.writer(f_object)
+                    writer_object.writerow(csv_list)
                 print("--- %s seconds ---" % (time.time() - start_time))
 
             except Exception as e:

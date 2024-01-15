@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-import dlib
 from deepface import DeepFace
 
 # folder = "./test_img/"

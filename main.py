@@ -16,7 +16,6 @@ from extract_skin import extractSkin
 import tensorflow as tf
 import numpy as np
 import cv2
-import glob
 from deepface import DeepFace
 
 # # Balance data
