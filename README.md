@@ -2,7 +2,7 @@
 # (NTN Team)
 ## Team members:
 Trần Quang Nhật [github](https://github.com/Yamakaze-chan)   
-Võ Thành Thái [github](#)   
+Võ Thành Thái [github](https://github.com/thaivo02)   
 Nguyễn Duy Nhật [github](#)   
 <br>
 
