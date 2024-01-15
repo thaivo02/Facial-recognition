@@ -67,7 +67,7 @@ Thư viện Deepface dùng để xác định vị trí khuôn mặt <br>
 pip install deepface
 ```
 9. **Colormath** (3.0.0) (optional) <br>
-Thư viện Colormath dùng để skintone mà không cần qua huấn luyện mô hình <br>
+Thư viện Colormath dùng để xác định skintone mà không cần qua huấn luyện mô hình <br>
 *Lệnh cài đặt* <br>
 ```
 pip install colormath
