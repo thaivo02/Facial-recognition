@@ -17,6 +17,7 @@ import os
 from PIL import Image
 from extract_frontface import get_face
 import glob
+from keras.preprocessing.image import ImageDataGenerator
 
 def load_images_from_folder(list_data):
     df = pd.DataFrame(list_data, columns=['file_name'])
@@ -77,15 +78,20 @@ def train_gender_model(rows = 0):
     #x_gender = load_images_from_folder(data)
     # print("x: " ,x)
 
+    aug = ImageDataGenerator(
+        rotation_range=20,
+        zoom_range=0.15,
+        horizontal_flip=True)
+
     print("start training")
     #x_age_train, x_age_test, y_age_train, y_age_test = train_test_split(x, y_age, test_size=0.22, random_state=37)
     x_gender_train, x_gender_test, y_gender_train, y_gender_test = train_test_split(x, y_gender, test_size=0.22, random_state=37)
 
     model = create_gender_model()
-    history = model.fit(x_gender_train,y_gender_train,validation_data=(x_gender_train,y_gender_train), batch_size=32, epochs=15, validation_split=0.2)
+    history = model.fit(aug.flow(x_gender_train,y_gender_train, batch_size=32),validation_data=(x_gender_train,y_gender_train), batch_size=32, epochs=30, validation_split=0.2)
 
 
-    model.save('gender/models/pred_gender_model.keras')
+    model.save('gender/models/pred_gender_model1.keras')
     print(model.evaluate(x_gender_test, y_gender_test,verbose=0))
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -93,8 +99,8 @@ def train_gender_model(rows = 0):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("./plot/gender_CNN_plot_acc.png")
-    plt.show()
+    plt.savefig("./plot/gender_CNN_plot_acc1.png")
+    #plt.show()
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -102,5 +108,5 @@ def train_gender_model(rows = 0):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("./plot/gender_CNN_plot_loss.png")
-    plt.show()
+    plt.savefig("./plot/gender_CNN_plot_loss1.png")
+    #plt.show()

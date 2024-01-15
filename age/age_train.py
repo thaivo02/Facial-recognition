@@ -18,6 +18,7 @@ import os
 from PIL import Image
 from extract_frontface import get_face
 import glob
+from keras.preprocessing.image import ImageDataGenerator
 
 def load_images_from_folder(list_data):
     df = pd.DataFrame(list_data, columns=['file_name'])
@@ -36,30 +37,41 @@ def load_images_from_folder(list_data):
     return np.array(images)
 
 def create_age_model():
-    final_cnn = Sequential()
-    # Input layer with 32 filters, followed by an AveragePooling2D layer.
-    final_cnn.add(Conv2D(filters=32, kernel_size=3, activation='relu', input_shape=(64, 64, 3)))    # 3rd dim = 1 for grayscale images.
-    final_cnn.add(AveragePooling2D(pool_size=(2,2)))
-    # Three Conv2D layers with filters increasing by a factor of 2 for every successive Conv2D layer.
-    final_cnn.add(Conv2D(filters=64, kernel_size=3, activation='relu'))
-    final_cnn.add(AveragePooling2D(pool_size=(2,2)))
-    final_cnn.add(Conv2D(filters=128, kernel_size=3, activation='relu'))
-    final_cnn.add(AveragePooling2D(pool_size=(2,2)))
-    final_cnn.add(Conv2D(filters=256, kernel_size=3, activation='relu'))
-    final_cnn.add(AveragePooling2D(pool_size=(2,2)))
-    # A GlobalAveragePooling2D layer before going into Dense layers below.
-    # GlobalAveragePooling2D layer gives no. of outputs equal to no. of filters in last Conv2D layer above (256).
-    final_cnn.add(GlobalAveragePooling2D())
-    # One Dense layer with 132 nodes so as to taper down the no. of nodes from no. of outputs of GlobalAveragePooling2D layer above towards no. of nodes in output layer below (7).
-    final_cnn.add(Dense(132, activation='relu'))
-    # Output layer with 7 nodes (equal to the no. of classes).
-    final_cnn.add(Dense(6, activation='softmax'))
-    final_cnn.summary()
+    # Define the input layer
+    input_layer = Input(shape=(64,64,3))
 
-    # Compiling the above created CNN architecture.
-    final_cnn.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    # First convolutional block
+    x = Conv2D(32, (5,5), activation='relu', padding='same')(input_layer)
+    x = MaxPooling2D((2,2))(x)
+    x = BatchNormalization()(x)
 
-    return final_cnn
+    # Second convolutional block
+    x = Conv2D(32, (3,3), activation='relu', padding='same')(x)
+    x = MaxPooling2D((2,2))(x)
+    x = BatchNormalization()(x)
+
+    # Third convolutional block
+    x = Conv2D(32, (3,3), activation='relu', padding='same')(x)
+    x = MaxPooling2D((2,2))(x)
+
+    # Flatten the output
+    x = Flatten()(x)
+    # Age regression branch
+    age_branch = Dense(32, activation='relu')(x)
+    #age_branch = Dropout(0.5)(age_branch)
+    age_branch = Dense(32, activation='relu')(age_branch)
+    #age_branch = Dropout(0.5)(age_branch)
+    age_branch = Dense(7, activation='softmax', name='age_output')(age_branch)
+
+    # Define the multi-output model
+    model = Model(inputs=input_layer, outputs=age_branch)
+
+    # Compile the model
+    model.compile(optimizer='adam',
+                loss='sparse_categorical_crossentropy',
+                metrics='accuracy')
+
+    return model
 
 def train_age_model(rows = 0):
     age_dict = {'20-30s':0,'40-50s':1,'Baby':2,'Kid':3,'Senior':4,'Teenager':5}
@@ -76,11 +88,17 @@ def train_age_model(rows = 0):
     #x_age_train, x_age_test, y_age_train, y_age_test = train_test_split(x, y_age, test_size=0.22, random_state=37)
     x_age_train, x_age_test, y_age_train, y_age_test = train_test_split(x, y_age, test_size=0.22, random_state=37)
 
+    aug = ImageDataGenerator(
+        rotation_range=20,
+        zoom_range=0.15,
+        horizontal_flip=True,
+        fill_mode="nearest")
+
     model = create_age_model()
-    history = model.fit(x_age_train,y_age_train,validation_data=(x_age_train,y_age_train), batch_size=32, epochs=15, validation_split=0.2)
+    history = model.fit(aug.flow(x_age_train,y_age_train, batch_size=32),validation_data=(x_age_train,y_age_train), batch_size=32, epochs=50, validation_split=0.2)
 
 
-    model.save('age/models/pred_age_model.keras')
+    model.save('age/models/pred_age_model1.keras')
     print(model.evaluate(x_age_test, y_age_test,verbose=0))
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -88,8 +106,8 @@ def train_age_model(rows = 0):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("age/plot/age_CNN_plot_acc.png")
-    plt.show()
+    plt.savefig("age/plot/age_CNN_plot_acc1.png")
+    #plt.show()
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -97,5 +115,5 @@ def train_age_model(rows = 0):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("age/plot/age_CNN_plot_loss.png")
-    plt.show()
+    plt.savefig("age/plot/age_CNN_plot_loss1.png")
+    #plt.show()

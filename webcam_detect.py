@@ -10,7 +10,7 @@ from gender.gender_predict import predict_gender
 from age.age_predict import predict_age
 from ethnicity.ethnicity_predict import predict_race
 from skintone.skintone_predict import predict_skintone
-from emotion.emotion_predict import predict_emotion
+from emotion.emotion_predict import predict_emotion, emo_model
 from mask.mask_predict import predict_mask
 
 cam = cv2.VideoCapture(0)
@@ -24,8 +24,9 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # load model
 gender_model = tf.keras.models.load_model('gender/models/pred_gender_model.keras')
 race_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
-age_model = tf.keras.models.load_model('age/models/pred_age_model.keras')
-emo_model = tf.keras.models.load_model('emotion/models/pred_emotion_model.keras')
+age_model = tf.keras.models.load_model('age/models/pred_age_model1.keras')
+# emo_model = tf.keras.models.load_model('emotion/models/pred_emotion_model1.keras')
+emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 mask_model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
 # used to record the time when we processed last frame 
 prev_frame_time = 0
@@ -55,7 +56,7 @@ while True:
             cv2.putText(img,"Gender: "+predict_gender(img_resized, gender_model), (x, y-30), font, font_size, font_color, font_thickness)
             cv2.putText(img,"Skintone: "+predict_skintone(face[0]), (x, y-40), font, font_size, font_color, font_thickness)
             cv2.putText(img,"Mask: "+predict_mask(np.array([cv2.resize(face[0], (128,128))]), mask_model), (x, y-50), font, font_size, font_color, font_thickness)
-            cv2.putText(img,"Mask: "+predict_emotion(np.array([cv2.resize(face[0], (64,64))]), emo_model), (x, y-60), font, font_size, font_color, font_thickness)
+            cv2.putText(img,"Emotion: "+predict_emotion(cv2.cvtColor(cv2.resize(face[0], (48,48)), cv2.COLOR_BGR2GRAY).reshape(-1, 48,48, 1) , emotion_model), (x, y-60), font, font_size, font_color, font_thickness)
         except Exception as e:
             print(e)
     cv2.imshow('my webcam', img)

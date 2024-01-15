@@ -96,10 +96,10 @@ def train_mask_model(rows = 0):
         fill_mode="nearest")
 
     model = create_mask_model()
-    history = model.fit(aug.flow(x_mask_train, y_mask_train, batch_size=32),validation_data=(x_mask_train,y_mask_train), batch_size=32, epochs=15, validation_split=0.2)
+    history = model.fit(aug.flow(x_mask_train, y_mask_train, batch_size=32),validation_data=(x_mask_train,y_mask_train), batch_size=32, epochs=50, validation_split=0.2)
 
 
-    model.save('mask/models/pred_mask_model.keras')
+    model.save('mask/models/pred_mask_model1.keras')
     print(model.evaluate(x_mask_test, y_mask_test,verbose=0))
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -107,8 +107,8 @@ def train_mask_model(rows = 0):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("mask/plot/mask_CNN_plot_acc.png")
-    plt.show()
+    plt.savefig("mask/plot/mask_CNN_plot_acc1.png")
+    #plt.show()
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -116,5 +116,5 @@ def train_mask_model(rows = 0):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("mask/plot/mask_CNN_plot_loss.png")
-    plt.show()
+    plt.savefig("mask/plot/mask_CNN_plot_loss1.png")
+    #plt.show()

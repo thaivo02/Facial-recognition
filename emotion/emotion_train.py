@@ -35,22 +35,41 @@ def load_images_from_folder(list_data):
 
 
 def create_emotion_model():
-    input_shape=(64,64,3)
+    input_layer = Input(shape=(64,64,3))
 
-    model=Sequential([
-                  Conv2D(64,3,activation='relu',kernel_initializer='he_normal',input_shape=(64,64,3)),
-                  MaxPooling2D(3),
-                  Conv2D(128,3,activation='relu',kernel_initializer='he_normal'),
-                  Conv2D(256,3,activation='relu',kernel_initializer='he_normal'),
-                  MaxPooling2D(3),
-                  Flatten(),
-                  Dense(256,activation='relu'),
-                  Dense(7,activation='softmax',kernel_initializer='glorot_normal')
-                  
-])
-    model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+    # First convolutional block
+    x = Conv2D(64, (2,2), activation='relu', padding='same')(input_layer)
+    x = MaxPooling2D((2,2))(x)
+    x = BatchNormalization()(x)
 
-    print(model.summary())
+    # Second convolutional block
+    x = Conv2D(128, (2,2), activation='relu', padding='same')(x)
+    x = MaxPooling2D((2,2))(x)
+    x = BatchNormalization()(x)
+
+    # Third convolutional block
+    x = Conv2D(256, (2,2), activation='relu', padding='same')(x)
+    x = MaxPooling2D((2,2))(x)
+    x = BatchNormalization()(x)
+
+    # Flatten the output
+    x = Flatten()(x)
+    # Age regression branch
+    age_branch = Dense(256, activation='relu')(x)
+    age_branch = Dropout(0.2)(age_branch)
+    #age_branch = Dense(128, activation='relu')(age_branch)
+    #age_branch = Dropout(0.2)(age_branch)
+    age_branch = Dense(64, activation='relu')(age_branch)
+    age_branch = Dense(7, activation='softmax', name='age_output')(age_branch)
+
+    # Define the multi-output model
+    model = Model(inputs=input_layer, outputs=age_branch)
+
+    # Compile the model
+    model.compile(optimizer='adam',
+                loss='sparse_categorical_crossentropy',
+                metrics='accuracy')
+
     return model
 
 
@@ -74,24 +93,19 @@ def train_emotion_model(rows=0):
     # construct the training image generator for data augmentation
     aug = ImageDataGenerator(
         rotation_range=20,
-        zoom_range=0.15,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        shear_range=0.15,
         horizontal_flip=True,
-        fill_mode="nearest",
     )
 
     model = create_emotion_model()
     history = model.fit(
-        x_emotion_train, y_emotion_train,
+        aug.flow(x_emotion_train, y_emotion_train),
         validation_data=(x_emotion_train, y_emotion_train),
         batch_size=32,
-        epochs=30,
+        epochs=50,
         validation_split=0.2,
     )
 
-    model.save("emotion/models/pred_emotion_model.keras")
+    model.save("emotion/models/pred_emotion_model1.keras")
     print(model.evaluate(x_emotion_test, y_emotion_test, verbose=0))
     plt.plot(history.history["accuracy"])
     plt.plot(history.history["val_accuracy"])
@@ -99,8 +113,8 @@ def train_emotion_model(rows=0):
     plt.ylabel("accuracy")
     plt.xlabel("epoch")
     plt.legend(["train", "val"], loc="upper left")
-    plt.savefig("plot/emotion_CNN_plot_acc.png")
-    plt.show()
+    plt.savefig("plot/emotion_CNN_plot_acc1.png")
+    #plt.show()
 
     plt.plot(history.history["loss"])
     plt.plot(history.history["val_loss"])
@@ -108,5 +122,5 @@ def train_emotion_model(rows=0):
     plt.ylabel("loss")
     plt.xlabel("epoch")
     plt.legend(["train", "val"], loc="upper left")
-    plt.savefig("plot/emotion_CNN_plot_loss.png")
-    plt.show()
+    plt.savefig("plot/emotion_CNN_plot_loss1.png")
+    #plt.show()

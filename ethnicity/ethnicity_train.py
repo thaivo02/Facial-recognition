@@ -18,6 +18,7 @@ import os
 from PIL import Image
 from extract_frontface import get_face
 import glob
+from keras.preprocessing.image import ImageDataGenerator
 
 def load_images_from_folder(list_data):
     df = pd.DataFrame(list_data, columns=['file_name'])
@@ -95,16 +96,23 @@ def train_race_model(rows = 0):
     x = load_images_from_folder(data)
     #x_age = load_images_from_folder(data)
     # print("x: " ,x)
+    aug = ImageDataGenerator(
+        rotation_range=20,
+        zoom_range=0.15,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        horizontal_flip=True,
+        fill_mode="nearest")
 
     print("start training")
     #x_age_train, x_age_test, y_age_train, y_age_test = train_test_split(x, y_age, test_size=0.22, random_state=37)
     x_race_train, x_race_test, y_race_train, y_race_test = train_test_split(x, y_race, test_size=0.22, random_state=37)
 
     model = create_race_model()
-    history = model.fit(x_race_train,y_race_train,validation_data=(x_race_train,y_race_train), batch_size=32, epochs=20, validation_split=0.2)
+    history = model.fit(aug.flow(x_race_train,y_race_train, batch_size=32),validation_data=(x_race_train,y_race_train), batch_size=32, epochs=50, validation_split=0.2)
 
 
-    model.save('ethnicity/models/pred_ethnicity_model.keras')
+    model.save('ethnicity/models/pred_ethnicity_model1.keras')
     print(model.evaluate(x_race_test, y_race_test,verbose=0))
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -112,8 +120,8 @@ def train_race_model(rows = 0):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("ethnicity/plot/ethnicity_CNN_plot_acc.png")
-    plt.show()
+    plt.savefig("ethnicity/plot/ethnicity_CNN_plot_acc1.png")
+    #plt.show()
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -121,5 +129,5 @@ def train_race_model(rows = 0):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
-    plt.savefig("ethnicity/plot/ethnicity_CNN_plot_loss.png")
-    plt.show()
+    plt.savefig("ethnicity/plot/ethnicity_CNN_plot_loss1.png")
+    #plt.show()

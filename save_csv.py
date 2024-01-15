@@ -13,6 +13,7 @@ from ethnicity.ethnicity_predict import predict_race
 from skintone.skintone_predict import predict_skintone
 from mask.mask_predict import predict_mask
 from extract_frontface import get_face, detect_skin_in_color
+from emotion.emotion_predict import predict_emotion, emo_model
 from extract_skin import extractSkin
 
 def load_image_for_pred(folder_path):
@@ -25,6 +26,8 @@ def load_image_for_pred(folder_path):
     race_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
     age_model = tf.keras.models.load_model('age/models/pred_age_model.keras')
     mask_model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
+    #emo_model = tf.keras.models.load_model('emotion/models/pred_emotion_model.keras')
+    emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 
     # Write header of csv
     with open(r"D:\Python_project\answer\answer.csv", 'w', newline='') as f_object:
@@ -34,28 +37,27 @@ def load_image_for_pred(folder_path):
         for ind  in df.index:
             try:
                 start_time = time.time()
-                csv_list = []
                 _ = data[df['file_name'][ind]] #test if detect face
 
                 path = os.path.join(folder_path,df['file_name'][ind])
                 img = cv2.imread(path)
-                face = get_face(img)
-                for i in face[0]:
+                for face in get_face(img):
+                    csv_list = []
                     print("Load image No." + str(data[df['file_name'][ind]]) + "; File: "+ path)
 
                     #file_name
                     csv_list.append(df['file_name'][ind])
 
                     # bounding box
-                    print("bbox: ", face[1][0])
-                    csv_list.append(face[1][0])
+                    print("bbox: ", face[1])
+                    csv_list.append(face[1])
 
                     # image id
                     print("image id: ", data[df['file_name'][ind]])
                     csv_list.append(data[df['file_name'][ind]])
 
-                    img_resized = np.array([cv2.resize(i, (64,64))])
-                    img_resized_mask = np.array([cv2.resize(i, (128,128))])
+                    img_resized = np.array([cv2.resize(face[0], (64,64))])
+                    img_resized_mask = np.array([cv2.resize(face[0], (128,128))])
 
                     # race predict
                     print("race: ", predict_race(img_resized, race_model))
@@ -68,17 +70,16 @@ def load_image_for_pred(folder_path):
                     # emotion predict
                     print("emotion: ", "Neural")
                     #csv_list.append(predict_emo(img_path))
-                    csv_list.append("Neural")
+                    csv_list.append(predict_emotion(cv2.cvtColor(cv2.resize(face[0], (48,48)), cv2.COLOR_BGR2GRAY).reshape(-1, 48,48, 1) , emotion_model))
 
                     print("gender: ", predict_gender(img_resized, gender_model))
                     csv_list.append(predict_gender(img_resized, gender_model))
-                    print("skintone: ", predict_skintone(i))
-                    csv_list.append(predict_skintone(i))
+                    print("skintone: ", predict_skintone(face[0]))
+                    csv_list.append(predict_skintone(face[0]))
                     print("masked: ", predict_mask(img_resized_mask, mask_model))
                     csv_list.append(predict_mask(img_resized_mask, mask_model))
-                    csv_list.append("unmasked")
-                #writer_object = csv.writer(f_object)
-                #writer_object.writerow(csv_list)
+                    #writer_object = csv.writer(f_object)
+                    #writer_object.writerow(csv_list)
                 print("--- %s seconds ---" % (time.time() - start_time))
 
             except Exception as e:
