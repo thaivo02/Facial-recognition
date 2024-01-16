@@ -96,7 +96,7 @@ def train_mask_model(rows = 0):
         fill_mode="nearest")
 
     model = create_mask_model()
-    history = model.fit(aug.flow(x_mask_train, y_mask_train, batch_size=32),validation_data=(x_mask_train,y_mask_train), batch_size=32, epochs=50, validation_split=0.2)
+    history = model.fit(aug.flow(x_mask_train, y_mask_train, batch_size=32),validation_data=(x_mask_train,y_mask_train), batch_size=32, epochs=30, validation_split=0.2)
 
 
     model.save('mask/models/pred_mask_model1.keras')

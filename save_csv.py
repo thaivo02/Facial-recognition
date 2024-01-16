@@ -6,6 +6,7 @@ import json
 import csv
 import time
 import tensorflow as tf
+import glob
 
 from gender.gender_predict import predict_gender
 from age.age_predict import predict_age
@@ -30,31 +31,33 @@ def load_image_for_pred(folder_path):
     emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 
     # Write header of csv
-    with open(r"D:\Python_project\answer\answer.csv", 'w', newline='') as f_object:
-        writer_object = csv.writer(f_object)
-        writer_object.writerow(['file_name','bbox','image_id','race','age','emotion','gender','skintone','masked'])
+    with open(r"D:\Python_project\answer\answer1.csv", 'w', newline='') as f_object:
+        #writer_object = csv.writer(f_object)
+        #writer_object.writerow(['file_name','bbox','image_id','race','age','emotion','gender','skintone','masked'])
     #print(data['hjahdjahsgda'])
-        for ind  in df.index:
+        #for ind  in df.index:
+        for file in glob.glob(r'D:/Python_project/private_test (1)/data/*.jpg'):
             try:
                 start_time = time.time()
-                _ = data[df['file_name'][ind]] #test if detect face
+                # _ = data[df['file_name'][ind]] #test if detect face
 
-                path = os.path.join(folder_path,df['file_name'][ind])
-                img = cv2.imread(path)
+                # path = os.path.join(folder_path,df['file_name'][ind])
+                img = cv2.imread(file)
                 for face in get_face(img):
                     csv_list = []
-                    print("Load image No." + str(data[df['file_name'][ind]]) + "; File: "+ path)
+                    #print("Load image No." + str(data[df['file_name'][ind]]) + "; File: "+ path)
 
                     #file_name
-                    csv_list.append(df['file_name'][ind])
+                    #csv_list.append(df['file_name'][ind])
 
                     # bounding box
                     print("bbox: ", face[1])
                     csv_list.append(face[1])
 
                     # image id
-                    print("image id: ", data[df['file_name'][ind]])
-                    csv_list.append(data[df['file_name'][ind]])
+                    print("image id: ", os.path.basename(file))
+                    #csv_list.append(data[df['file_name'][ind]])
+                    csv_list.append(os.path.basename(file))
 
                     img_resized = np.array([cv2.resize(face[0], (64,64))])
                     img_resized_mask = np.array([cv2.resize(face[0], (128,128))])
