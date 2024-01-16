@@ -37,7 +37,10 @@ decorator==5.1.1
 deepface==0.0.81
 defusedxml==0.7.1
 Deprecated==1.2.14
+<<<<<<< HEAD
 dlib @ file:///C:/Users/ACER/AI/hackathon/other_files/dlib-19.22.99-cp310-cp310-win_amd64.whl#sha256=f2181b6724669fb0147c9ebc326d72b94de41bced1812eff5df4b133b5d0b575
+=======
+>>>>>>> efaee52da1fd46bec6b799c9f81adae47063dc44
 EasyProcess==1.1
 einops==0.2.0
 entrypoint2==1.1
