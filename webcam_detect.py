@@ -42,7 +42,7 @@ while True:
     prev_frame_time = new_frame_time 
 
     cv2.putText(img, "FPS: " +str(fps) , (0, 20),font, font_size, font_color, font_thickness)
-    for face in get_face(img, True):
+    for face in get_face(img):
         try:
             x = face[1][0]
             y = face[1][1]

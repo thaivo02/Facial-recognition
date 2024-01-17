@@ -8,6 +8,7 @@ import numpy
 from colormath.color_conversions import convert_color
 from colormath.color_diff import delta_e_cie2000
 from colormath.color_objects import sRGBColor, LabColor
+import time
 
 Categories =['dark', 'mid-dark', 'mid-light', 'light']
 def predict_skintone(img):
@@ -20,8 +21,12 @@ def predict_skintone(img):
         #print("The predicted image is : "+model.predict(l)[0])
         #cv2.imshow("img", i)
         #cv2.waitKey(0)
-    return model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0]
-    #return (classify(extractSkin(img))['tone_label'])
+    #start_time = time.time()
+    #return( model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0] )
+    #print("model run time: ", time.time() - start_time)
+    #start_time = time.time()
+    return( (classify(extractSkin(img))['tone_label']))
+    #print("non-model run time: ", time.time() - start_time)
 #     plt.imshow(img) 
 #     plt.show() 
     

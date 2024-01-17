@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 from deepface import DeepFace
+from mtcnn import MTCNN
 
 # folder = "./test_img/"
 # img_path = 'selfie1.jpg'
@@ -27,7 +28,7 @@ def convert_and_trim_bb(image, rect):
 	return [startX, startY, w, h]
 
 """Using Haar Cascade to get face of image"""
-def get_face(img, camera = False):
+def get_face(img):
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # #gray = cv2.equalizeHist(gray)
     # list_img = []
@@ -70,32 +71,42 @@ def get_face(img, camera = False):
     #         list_img.append([img[y:y+w, x:x+h], [x,y, w, h]])
     #         #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
     #     return list_img
-    list_img = []
-    try:
-        for i in DeepFace.extract_faces(img,detector_backend  = "opencv"):
-                x = i['facial_area']['x']
-                y = i['facial_area']['y']
-                w = i['facial_area']['w']
-                h = i['facial_area']['h']
-        #             # cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-        #             # list_img.append([img[y:y+w, x:x+h], [x,y, w, h]]) if is_face((x,y,w,h), img) else 1
-                list_img.append([img[y:y+w, x:x+h], [x,y, w, h]])
-        #             #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                return list_img
-    except Exception as e:
+        list_img = []
         try:
-            for i in DeepFace.extract_faces(img,detector_backend  = "mtcnn"):
-                    x = i['facial_area']['x']
-                    y = i['facial_area']['y']
-                    w = i['facial_area']['w']
-                    h = i['facial_area']['h']
-            #             # cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-            #             # list_img.append([img[y:y+w, x:x+h], [x,y, w, h]]) if is_face((x,y,w,h), img) else 1
-                    list_img.append([img[y:y+w, x:x+h], [x,y, w, h]])
-            #             #cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                    return list_img
-        except Exception as e1:
-             return []
+                #face_cascade = cv2.CascadeClassifier('./other_files/haarcascade_frontalface_default.xml')
+                #faces, _, scores = face_cascade.detectMultiScale3(img, 1.1, 10, outputRejectLevels=True)
+                resized = False
+                height, width = img.shape[0], img.shape[1]
+                image = img.copy()
+                if height > 640 or width > 640:
+                        r = 640.0 / max(height, width)
+                        image = cv2.resize(img, (int(width * r), int(height * r)))
+                        height, width = image.shape[0], image.shape[1]
+                        resized = True
+                faces_detector = cv2.FaceDetectorYN_create(r"other_files\face_detection_yunet_2023mar.onnx", "", (0, 0))
+                faces_detector.setInputSize((width, height))
+                faces_detector.setScoreThreshold(0.3)
+                _, faces = faces_detector.detect(image)
+                for face in faces:
+                        (x, y, w, h, x_re, y_re, x_le, y_le) = list(map(int, face[:8]))
+                        x = max(x, 0)
+                        y = max(y, 0)
+                        if resized:
+                                x, y, w, h = int(x / r), int(y / r), int(w / r), int(h / r)
+                        list_img.append([img[int(y) : int(y + h), int(x) : int(x + w)], [x,y, w, h]])
+                        # cv2.imshow("img", img[int(y) : int(y + h), int(x) : int(x + w)])
+                        # cv2.waitKey(0)
+                return list_img
+        except Exception as e:
+                        # print (e)
+                try:
+                        for i in MTCNN().detect_faces(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)):
+                                #print(i)
+                                x, y, w, h = i["box"]
+                                list_img.append([img[y:y+h, x:x+w], [x,y, w, h]])
+                        return list_img
+                except Exception as e1:
+                        return []
         
 
 def is_face(face_coord, image, threshold=0.3):
