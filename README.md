@@ -60,11 +60,11 @@ Thư viện Matplotlib dùng để lưu lại kết quả huấn luyện mô hì
 ```
 pip install matplotlib
 ```
-8. **Deepface** (0.0.81) <br>
-Thư viện Deepface dùng để xác định vị trí khuôn mặt <br>
+8. **MTCNN** (0.0.81) <br>
+Thư viện MTCNN dùng để xác định vị trí khuôn mặt <br>
 *Lệnh cài đặt* <br>
 ```
-pip install deepface
+pip install mtcnn
 ```
 9. **Colormath** (3.0.0) (optional) <br>
 Thư viện Colormath dùng để xác định skintone mà không cần qua huấn luyện mô hình <br>
