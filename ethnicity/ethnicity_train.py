@@ -45,15 +45,9 @@ def conv_block(inp, filters=32, bn=True, pool=True):
     return _
 
 def create_race_model():
-    # CNN Architecture Used is similar to VGG-16
     inp = Input(shape=(64, 64, 3))
 
-    net = Conv2D(filters=16, strides=(2,2), kernel_size=(3,3))(inp)
-    net = BatchNormalization()(net)
-    net = Activation('elu')(net)
-    net = Dropout(0.5)(net)
-
-    net = Conv2D(filters=32, strides=(2,2), kernel_size=(3,3))(net)
+    net = Conv2D(filters=32, strides=(2,2), kernel_size=(3,3))(inp)
     net = BatchNormalization()(net)
     net = Activation('elu')(net)
     net = Dropout(0.5)(net)
@@ -63,12 +57,17 @@ def create_race_model():
     net = Activation('elu')(net)
     net = Dropout(0.5)(net)
 
-    net = Conv2D(filters=64, strides=(2,2), kernel_size=(3,3))(net)
+    net = Conv2D(filters=128, strides=(2,2), kernel_size=(3,3))(net)
     net = BatchNormalization()(net)
     net = Activation('elu')(net)
     net = Dropout(0.5)(net)
 
-    net = Conv2D(filters=64, strides=(2,2), kernel_size=(3,3))(net)
+    net = Conv2D(filters=128, strides=(2,2), kernel_size=(3,3))(net)
+    net = BatchNormalization()(net)
+    net = Activation('elu')(net)
+    net = Dropout(0.5)(net)
+
+    net = Conv2D(filters=128, strides=(2,2), kernel_size=(3,3))(net)
     net = BatchNormalization()(net)
     net = Activation('elu')(net)
     net = Dropout(0.5)(net)
@@ -76,7 +75,7 @@ def create_race_model():
     net = Flatten()(net)
 
     net = Dense(512, activation='relu')(net)
-    out = Dense(5, activation='softmax')(net)
+    out = Dense(3, activation='softmax')(net)
 
     model = Model(inputs=[inp], outputs=[out])
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
@@ -99,10 +98,7 @@ def train_race_model(rows = 0):
     aug = ImageDataGenerator(
         rotation_range=20,
         zoom_range=0.15,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        horizontal_flip=True,
-        fill_mode="nearest")
+        horizontal_flip=True)
 
     print("start training")
     #x_age_train, x_age_test, y_age_train, y_age_test = train_test_split(x, y_age, test_size=0.22, random_state=37)

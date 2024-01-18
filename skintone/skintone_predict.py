@@ -1,7 +1,7 @@
 import pickle
 import cv2
 import matplotlib.pyplot as plt
-from extract_frontface import get_face,detect_skin_in_color
+from extract_frontface import detect_skin_in_color
 from extract_skin import extractSkin
 import numpy as np
 import numpy
@@ -14,7 +14,7 @@ Categories =['dark', 'mid-dark', 'mid-light', 'light']
 def predict_skintone(img):
     
 #     # load
-    model = pickle.load(open('skintone/models/pred_skintone_model.pkl', 'rb'))
+    model = pickle.load(open('skintone/models/pred_skintone_model1.pkl', 'rb'))
     #for i in extractSkin(img):
         #print(classify(i))
         #l=[extractSkin(img).flatten()] 
@@ -22,10 +22,10 @@ def predict_skintone(img):
         #cv2.imshow("img", i)
         #cv2.waitKey(0)
     #start_time = time.time()
-    #return( model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0] )
+    return( model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0] )
     #print("model run time: ", time.time() - start_time)
     #start_time = time.time()
-    return( (classify(extractSkin(img))['tone_label']))
+    #return( (classify(extractSkin(img))['tone_label']))
     #print("non-model run time: ", time.time() - start_time)
 #     plt.imshow(img) 
 #     plt.show() 
@@ -47,7 +47,7 @@ DEFAULT_TONE_PALETTE = {
 DEFAULT_TONE_LABELS = {
     "color": [Categories[i] for i in range(len(DEFAULT_TONE_PALETTE["color"]))]}
 
-def dominant_colors(image, n_clusters=2):
+def dominant_colors(image, n_clusters=1):
     data = image
     data = np.reshape(data, (-1, 3))
     data = data[np.all(data != 0, axis=1)]

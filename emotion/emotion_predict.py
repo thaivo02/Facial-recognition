@@ -12,9 +12,6 @@ from tensorflow.keras.layers import (
 )
 
 emotion_label = ["Anger", "Disgust", "Fear", "Happiness", "Sadness", "Surprise", "Neutral"]
-data = pd.read_csv(r"D:\Python_project\labels.csv")
-emotions = sorted(set(data["emotion"]))
-emotion_dict = {emotion: index for index, emotion in enumerate(emotions)}
 
 def emo_model(emotion_pretrained_weight_path):
 

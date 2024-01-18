@@ -80,7 +80,6 @@ def train_gender_model(rows = 0):
 
     aug = ImageDataGenerator(
         rotation_range=20,
-        zoom_range=0.15,
         horizontal_flip=True)
 
     print("start training")
@@ -88,7 +87,7 @@ def train_gender_model(rows = 0):
     x_gender_train, x_gender_test, y_gender_train, y_gender_test = train_test_split(x, y_gender, test_size=0.22, random_state=37)
 
     model = create_gender_model()
-    history = model.fit(aug.flow(x_gender_train,y_gender_train, batch_size=32),validation_data=(x_gender_train,y_gender_train), batch_size=32, epochs=30, validation_split=0.2)
+    history = model.fit(aug.flow(x_gender_train,y_gender_train, batch_size=32),validation_data=(x_gender_train,y_gender_train), batch_size=32, epochs=20, validation_split=0.2)
 
 
     model.save('gender/models/pred_gender_model1.keras')

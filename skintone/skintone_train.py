@@ -44,7 +44,7 @@ def skintone_model(x_train, x_test, y_train, y_test):
     # print(grid.best_estimator_) 
 
     # Create a kernel support vector machine model
-    ksvm = SVC(C=10, gamma='scale', kernel='rbf').fit(x_train, y_train)
+    ksvm = SVC(C=1, gamma='scale', kernel='rbf').fit(x_train, y_train)
     
     # Evaluate the model on the test data
     y_pred = ksvm.predict(x_test) 
@@ -52,10 +52,10 @@ def skintone_model(x_train, x_test, y_train, y_test):
     confusion_matrix_plot=confusion_matrix(y_test, y_pred)
     cm_display = ConfusionMatrixDisplay(confusion_matrix = confusion_matrix_plot, display_labels = ['light', 'mid-light', 'dark', 'mid-dark'])
     cm_display.plot()
-    plt.savefig('skintone\plot\confusion_matrix.jpg')
+    plt.savefig('skintone\plot\confusion_matrix1.jpg')
     plt.show()  
     # save
-    with open('skintone/models/pred_skintone_model.pkl','wb') as f:
+    with open('skintone/models/pred_skintone_model1.pkl','wb') as f:
         pickle.dump(ksvm,f)
 
 def train_skintone_model():

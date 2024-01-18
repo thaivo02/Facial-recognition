@@ -69,19 +69,25 @@ def create_mask_model():
     #     metrics=["accuracy"])
     # return model
 
-    baseModel = VGG16(include_top=False, input_tensor=Input(shape=(64, 64, 3)))
+    baseModel = MobileNetV2(weights="imagenet", include_top=False,input_shape=(128,128,3))
+
+    # construct the head of the model that will be placed on top of the
+    # the base model
+    headModel = baseModel.output
+    headModel = AveragePooling2D(pool_size=(4, 4))(headModel)
+    headModel = Flatten(name="flatten")(headModel)
+    headModel = Dense(128, activation="relu")(headModel)
+    headModel = Dropout(0.5)(headModel)
+    headModel = Dense(2, activation="sigmoid")(headModel)
+
+    # place the head FC model on top of the base model (this will become
+    # the actual model we will train)
+    model = Model(inputs=baseModel.input, outputs=headModel)
+
+    # loop over all layers in the base model and freeze them so they will
+    # *not* be updated during the first training process
     for layer in baseModel.layers:
         layer.trainable = False
-
-    model = Sequential()
-    model.add(baseModel)
-    model.add(AveragePooling2D(pool_size=(2, 2)))
-    model.add(Flatten())
-    model.add(Dense(512, activation="relu"))
-    model.add(Dropout(0.5))
-    model.add(Dense(50, activation="relu"))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
 
     # compile our model
     model.compile(loss="binary_crossentropy", metrics=["accuracy"], \

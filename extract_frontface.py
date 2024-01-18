@@ -1,31 +1,10 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-from deepface import DeepFace
-from mtcnn import MTCNN
 
 # folder = "./test_img/"
 # img_path = 'selfie1.jpg'
 # img = cv2.imread(folder+img_path)
-
-def convert_and_trim_bb(image, rect):
-	# extract the starting and ending (x, y)-coordinates of the
-	# bounding box
-	startX = rect.left()
-	startY = rect.top()
-	endX = rect.right()
-	endY = rect.bottom()
-	# ensure the bounding box coordinates fall within the spatial
-	# dimensions of the image
-	startX = max(0, startX)
-	startY = max(0, startY)
-	endX = min(endX, image.shape[1])
-	endY = min(endY, image.shape[0])
-	# compute the width and height of the bounding box
-	w = endX - startX
-	h = endY - startY
-	# return our bounding box coordinates
-	return [startX, startY, w, h]
 
 """Using Haar Cascade to get face of image"""
 def get_face(img):
@@ -85,7 +64,7 @@ def get_face(img):
                         resized = True
                 faces_detector = cv2.FaceDetectorYN_create(r"other_files\face_detection_yunet_2023mar.onnx", "", (0, 0))
                 faces_detector.setInputSize((width, height))
-                faces_detector.setScoreThreshold(0.3)
+                faces_detector.setScoreThreshold(0.8)
                 _, faces = faces_detector.detect(image)
                 for face in faces:
                         (x, y, w, h, x_re, y_re, x_le, y_le) = list(map(int, face[:8]))
@@ -98,34 +77,7 @@ def get_face(img):
                         # cv2.waitKey(0)
                 return list_img
         except Exception as e:
-                        # print (e)
-                try:
-                        for i in MTCNN().detect_faces(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)):
-                                #print(i)
-                                x, y, w, h = i["box"]
-                                list_img.append([img[y:y+h, x:x+w], [x,y, w, h]])
-                        return list_img
-                except Exception as e1:
-                        return []
-        
-
-def is_face(face_coord, image, threshold=0.3):
-    """
-    Check if the face is a real face.
-    Method: detect the skin area in the "face" and check if the skin area is larger than the threshold
-    :param face_coord:
-    :param image:
-    :param is_bw:
-    :param threshold:
-    :return:
-    """
-    x,y,w,h = face_coord
-    face_image = image[y:y+w, x:x+h]
-    _, skin_mask = detect_skin_in_color(face_image)
-    skin_pixels = cv2.countNonZero(skin_mask)
-    total_pixels = face_image.shape[0] * face_image.shape[1]
-    skin_ratio = skin_pixels / total_pixels
-    return skin_ratio >= threshold
+                return []
 
 def detect_skin_in_color(image):
     # Converting from BGR Colors Space to HSV
