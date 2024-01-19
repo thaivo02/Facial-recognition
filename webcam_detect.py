@@ -22,12 +22,12 @@ font_thickness = 1
 font_color = (36,255,12)
 font = cv2.FONT_HERSHEY_SIMPLEX
 # load model
-gender_model = tf.keras.models.load_model('gender/models/pred_gender_model.keras')
+gender_model = tf.keras.models.load_model('gender/models/pred_gender_model1.keras')
+#gender_model =cv2.dnn.readNet(r"other_files\gender_net.caffemodel", r"other_files\gender_deploy.prototxt")
 race_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
 age_model = tf.keras.models.load_model('age/models/pred_age_model1.keras')
-# emo_model = tf.keras.models.load_model('emotion/models/pred_emotion_model1.keras')
-emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 mask_model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
+emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 # used to record the time when we processed last frame 
 prev_frame_time = 0
   

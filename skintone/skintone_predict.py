@@ -14,7 +14,7 @@ Categories =['dark', 'mid-dark', 'mid-light', 'light']
 def predict_skintone(img):
     
 #     # load
-    model = pickle.load(open('skintone/models/pred_skintone_model1.pkl', 'rb'))
+    model = pickle.load(open('skintone/models/pred_skintone_model.pkl', 'rb'))
     #for i in extractSkin(img):
         #print(classify(i))
         #l=[extractSkin(img).flatten()] 
@@ -25,7 +25,10 @@ def predict_skintone(img):
     return( model.predict([extractSkin(cv2.resize(img, (64,64))).flatten()])[0] )
     #print("model run time: ", time.time() - start_time)
     #start_time = time.time()
-    #return( (classify(extractSkin(img))['tone_label']))
+    # try:
+    #     return( (classify(extractSkin(img))['tone_label']))
+    # except:
+    #     return( (classify(img, False)['tone_label']))
     #print("non-model run time: ", time.time() - start_time)
 #     plt.imshow(img) 
 #     plt.show() 
@@ -38,10 +41,10 @@ setattr(numpy, "asscalar", patch_asscalar)
 
 DEFAULT_TONE_PALETTE = {
     "color": [
+        "#8c624c",
         "#8d5524",
-        "#ac7949",
-        "#c29363",
-        "#d8ad7d",
+        "#b38251",
+        "#d9ae7f",
     ]
 }
 DEFAULT_TONE_LABELS = {
@@ -79,6 +82,7 @@ def skin_tone(colors, percents, skin_tone_palette, tone_labels):
 
 def classify(
     image,
+    extract_skin_color=True,
     skin_tone_palette = DEFAULT_TONE_PALETTE["color"],
     tone_labels = DEFAULT_TONE_LABELS["color"],
     n_dominant_colors=1,
@@ -96,8 +100,9 @@ def classify(
     :param use_face: whether to use face area for detection
     :return:
     """
-    skin, _ = detect_skin_in_color(image)
-    dmnt_colors, dmnt_pcts = dominant_colors(skin, n_dominant_colors)
+    if (extract_skin_color):
+        image, _ = detect_skin_in_color(image)
+    dmnt_colors, dmnt_pcts = dominant_colors(image, n_dominant_colors)
     # # Generate readable strings
     # hex_colors = ["#%02X%02X%02X" % tuple(np.around([r, g, b]).astype(int)) for b, g, r in dmnt_colors]
     # pct_strs = ["%.2f" % p for p in dmnt_pcts]

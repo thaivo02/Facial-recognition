@@ -8,3 +8,4 @@ __pycache__
 .gitattributes
 test_img/
 trained_models/
+other_files/

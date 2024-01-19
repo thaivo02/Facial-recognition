@@ -60,7 +60,7 @@ def extractSkin(image):
     img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Defining skin Thresholds
-    low_hsv = np.array([0, 48, 80], dtype=np.uint8)
+    low_hsv = np.array([0, 20, 70], dtype=np.uint8)
     high_hsv = np.array([20, 255, 255], dtype=np.uint8)
 
     skin_mask = cv2.inRange(img, low_hsv, high_hsv)
@@ -70,9 +70,12 @@ def extractSkin(image):
     skin_mask = cv2.GaussianBlur(skin_mask, ksize=(3, 3), sigmaX=0)
 
     skin = cv2.bitwise_and(image, image, mask=skin_mask)
+    if cv2.countNonZero(cv2.cvtColor(skin, cv2.COLOR_BGR2GRAY)) == 0:
     # print(global_result.shape)
     # Return the Skin image
-    return skin
+        return image
+    else:
+        return skin
 
 
 #for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\male3.jpg")):

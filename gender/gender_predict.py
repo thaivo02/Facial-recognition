@@ -6,7 +6,7 @@ from keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv2D, AveragePooling2D
 from keras.models import Sequential,load_model,Model
 from keras.layers import Conv2D,MaxPooling2D,AvgPool2D,GlobalAveragePooling2D,Dense,Dropout,BatchNormalization,Flatten,Input
-from tensorflow.keras.layers import Input,Activation,Add
+from tensorflow.keras.layers import Input,Activation,Add,ZeroPadding2D,Convolution2D
 from tensorflow.keras.regularizers import l2
 from keras.layers import MaxPool2D, GlobalMaxPool2D
 from keras.optimizers import SGD
@@ -19,7 +19,6 @@ from extract_frontface import get_face
 import glob
 
 gender_dict = {'Male':0, 'Female':1}
-age_dict = {'20-30s':0,'40-50s':1,'Baby':2,'Kid':3,'Senior':4,'Teenager':5}
 
 def predict_gender(img, model):
     # data = pd.read_csv("D:\Python_project\labels.csv", nrows=10000)
@@ -30,8 +29,11 @@ def predict_gender(img, model):
     #     gend = np.argmax(pred[0])
     #     print("Original Gender", df['gender'][ind])
     #     print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(gend)])
-
-    
+    # blob = cv2.dnn.blobFromImage(img, 1.0, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
+    # model.setInput(blob)
+    # genderPreds = model.forward()
+    # gender = genderList[genderPreds[0].argmax()]
+    # return gender
     pred = model(img)
     #print("Predict Gender:", list(gender_dict.keys())[list(gender_dict.values()).index(np.argmax(pred[0]))])
     #cv2.imshow("img",i)

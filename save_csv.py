@@ -24,6 +24,7 @@ def load_image_for_pred(folder_path):
     id_by_name = data
     # load model
     gender_model = tf.keras.models.load_model('gender/models/pred_gender_model1.keras')
+    #gender_model =cv2.dnn.readNet(r"other_files\gender_net.caffemodel", r"other_files\gender_deploy.prototxt")
     race_model = tf.keras.models.load_model('ethnicity/models/pred_ethnicity_model.keras')
     age_model = tf.keras.models.load_model('age/models/pred_age_model1.keras')
     mask_model = tf.keras.models.load_model("mask\models\pred_mask_model.keras")
@@ -40,7 +41,24 @@ def load_image_for_pred(folder_path):
 
                 path = os.path.join(folder_path,df['file_name'][ind])
                 img = cv2.imread(path)
-                for face in get_face(img):
+                faces = get_face(img, 0.9)
+                if len(faces)==0:
+                    faces = get_face(img, 0.8)
+                    if len(faces)==0:
+                        faces = get_face(img, 0.7)
+                        if len(faces)==0:
+                            faces = get_face(img, 0.6)
+                            if len(faces)==0:
+                                faces = get_face(img, 0.5)
+                                if len(faces)==0:
+                                    faces = get_face(img, 0.4)
+                                    if len(faces)==0:
+                                        faces = get_face(img, 0.3)
+                                        if len(faces)==0:
+                                            faces = get_face(img, 0.2)
+                                            if len(faces)==0:
+                                                faces = get_face(img, 0.1)
+                for face in faces:
                     csv_list = []
                     print("Load image No." + str(id_by_name[df['file_name'][ind]]) + "; File: "+ path)
                     
@@ -52,7 +70,7 @@ def load_image_for_pred(folder_path):
                     race = predict_race(img_resized, race_model)
                     age = predict_age(img_resized, age_model)
                     emo = predict_emotion(cv2.cvtColor(cv2.resize(face[0], (48,48)), cv2.COLOR_BGR2GRAY).reshape(-1, 48,48, 1) , emotion_model)
-                    gender = predict_gender(img_resized, gender_model)
+                    gender = predict_gender(face[0], gender_model)
                     skintone = predict_skintone(face[0])
                     mask = predict_mask(np.array([cv2.resize(face[0], (128,128))]), mask_model)
 

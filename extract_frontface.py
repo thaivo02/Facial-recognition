@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 # img = cv2.imread(folder+img_path)
 
 """Using Haar Cascade to get face of image"""
-def get_face(img):
+def get_face(img, confidence = 0.9):
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # #gray = cv2.equalizeHist(gray)
     # list_img = []
@@ -64,7 +64,7 @@ def get_face(img):
                         resized = True
                 faces_detector = cv2.FaceDetectorYN_create(r"other_files\face_detection_yunet_2023mar.onnx", "", (0, 0))
                 faces_detector.setInputSize((width, height))
-                faces_detector.setScoreThreshold(0.8)
+                faces_detector.setScoreThreshold(confidence)
                 _, faces = faces_detector.detect(image)
                 for face in faces:
                         (x, y, w, h, x_re, y_re, x_le, y_le) = list(map(int, face[:8]))

@@ -27,14 +27,18 @@ from deepface import DeepFace
 # train_gender_model()
 # train_mask_model()
 # train_race_model()
-train_skintone_model()
+# train_skintone_model()
 
 # Predict data
 # model = tf.keras.models.load_model("emotion/models/pred_emotion_model1.keras")
+# model = emo_model("other_files\\facial_expression_model_weights.h5")
+# age_model = tf.keras.models.load_model('age/models/pred_age_model1.keras')
 # # for i in get_face(cv2.imread(r"C:\\Users\ACER\AI\\hackathon\\test_img\\masked.jpg")):
 # #for filename in glob.glob('D:\Python_project\data\\58837884.jpg'):
-# for i in get_face(cv2.imread(r"D:\Python_project\data\10492403.jpg")):
-#     img_resized = np.array([cv2.resize(i[0], (64,64))])
+# for i in get_face(cv2.imread(r"D:\Python_project\data\\95357413.jpg")):
+#     #img_resized = np.array([cv2.resize(i[0], (64,64))])
+#     #print(predict_age(img_resized, age_model))
+#     #print(predict_emotion(cv2.cvtColor(cv2.resize(i[0], (48,48)), cv2.COLOR_BGR2GRAY).reshape(-1, 48,48, 1) , model))
 #     print(predict_skintone(i[0]))
 #     cv2.imshow("img", i[0])
 #     cv2.waitKey(0)

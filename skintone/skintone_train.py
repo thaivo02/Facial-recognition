@@ -44,7 +44,7 @@ def skintone_model(x_train, x_test, y_train, y_test):
     # print(grid.best_estimator_) 
 
     # Create a kernel support vector machine model
-    ksvm = SVC(C=1, gamma='scale', kernel='rbf').fit(x_train, y_train)
+    ksvm = SVC(C=10, gamma='scale', kernel='rbf').fit(x_train, y_train)
     
     # Evaluate the model on the test data
     y_pred = ksvm.predict(x_test) 

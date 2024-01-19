@@ -6,7 +6,7 @@ from keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv2D, AveragePooling2D
 from keras.models import Sequential,load_model,Model
 from keras.layers import Conv2D,MaxPooling2D,AvgPool2D,GlobalAveragePooling2D,Dense,Dropout,BatchNormalization,Flatten,Input
-from tensorflow.keras.layers import Input,Activation,Add
+from tensorflow.keras.layers import Input,Activation,Add, ZeroPadding2D, Convolution2D
 from tensorflow.keras.regularizers import l2
 from keras.layers import MaxPool2D, GlobalMaxPool2D
 from keras.optimizers import SGD
