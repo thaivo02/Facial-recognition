@@ -123,13 +123,13 @@ predict\_<đặc điểm khuôn mặt>(img, model): hàm dùng để trả về 
 ### * Lưu ý * <br>
 Đối với skintone\_predict thì hàm chỉ nhận 1 ảnh làm input (skintone_predict(image))<br>
 # Kết quả huấn luyện mô hình<br>
-## Giới tính
-![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/gender/plot/gender_CNN_plot_acc.png)<br>
+## Giới tính<br>
+![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/gender/plot/gender_CNN_plot_acc.png?raw=true)<br>
 ## Tuổi<br>
-![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/age/plot/age_CNN_plot_acc1.png)<br>
+![Age Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/age/plot/age_CNN_plot_acc1.png?raw=true)<br>
 ## Cảm xúc<br>
 Vì sử dụng pretrained model nên không đánh giá<br>
 ## Chủng tộc<br>
-![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/ethnicity/plot/ethnicity_CNN_plot_acc.png)<br>
+![Race Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/ethnicity/plot/ethnicity_CNN_plot_acc.png?raw=true)<br>
 ## Đeo khẩu trang<br>
-![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/mask/plot/mask_CNN_plot_acc.png)<br>
+![Masked Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/mask/plot/mask_CNN_plot_acc.png?raw=true)<br>
