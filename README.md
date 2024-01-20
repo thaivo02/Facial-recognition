@@ -108,6 +108,7 @@ extract_skin.py
 main.py
 webcam_detect.py
 ```
+<br>
 ## File huấn luyện mô hình *(<đặc điểm khuôn mặt>_train.py)*<br> 
 train\_<đặc điểm khuôn mặt>_model(nrow=0): Hàm chính, dùng để đọc dữ liệu, xử lý dữ liệu và huấn luyện mô hình <br>
 train\_<đặc điểm khuôn mặt>_model(): Hàm dùng để thiết kế mạng (CNN hoặc các mạng tương tự) <br>
