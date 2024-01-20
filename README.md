@@ -88,7 +88,6 @@ python webcam_detect.py
 ```
 # Cấu trúc thiết kế 
 ## Thư mục
-<đặc điểm khuôn mặt> bao gồm age, gender, ethnicity, mask, emotion <br>
 ```
 project_base_path
 └───  other_files
@@ -109,6 +108,7 @@ extract_skin.py
 main.py
 webcam_detect.py
 ```
+<đặc điểm khuôn mặt> bao gồm age, gender, ethnicity, mask, emotion <br>
 <br>
 ## File huấn luyện mô hình *(<đặc điểm khuôn mặt>_train.py)*<br> 
 train\_<đặc điểm khuôn mặt>_model(nrow=0): Hàm chính, dùng để đọc dữ liệu, xử lý dữ liệu và huấn luyện mô hình <br>
@@ -116,15 +116,13 @@ train\_<đặc điểm khuôn mặt>_model(): Hàm dùng để thiết kế mạ
 load\_images\_from_folder(list_data): Xử lý hình ảnh để chuẩn bị huấn luyện mô hình
 * nrow : Số lượng dòng đọc từ file csv (sử dụng bao nhiêu ảnh để train), 0 tương ứng là đọc hết
 * list_data: dữ liệu trong file csv (gồm tên file và label)
-<br>
 ## File dự đoán *(<đặc điểm khuôn mặt>_predict.py)*<br> 
 predict\_<đặc điểm khuôn mặt>(img, model): hàm dùng để trả về kết quả dự đoán của mô hình<br>
 * img: Ảnh đầu vào
 * model: đường dẫn đến mô hình đã huấn luyện
-<br>
 ### * Lưu ý * <br>
 Đối với skintone\_predict thì hàm chỉ nhận 1 ảnh làm input (skintone_predict(image))<br>
-# Kết quả huấn luyện mô hình<br>
+# Kết quả huấn luyện mô hình
 ## Giới tính<br>
 ![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/gender/plot/gender_CNN_plot_acc.png)<br>
 ## Tuổi<br>
