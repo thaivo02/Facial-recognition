@@ -3,7 +3,7 @@
 ## Team members:
 Trần Quang Nhật [github](https://github.com/Yamakaze-chan)   
 Võ Thành Thái [github](https://github.com/thaivo02)   
-Nguyễn Duy Nhật [github](#)   
+Nguyễn Duy Nhật [github](https://github.com/Stevesunny090)   
 <br>
 
 # Introduction
