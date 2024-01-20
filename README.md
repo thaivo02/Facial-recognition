@@ -124,7 +124,7 @@ predict\_<đặc điểm khuôn mặt>(img, model): hàm dùng để trả về 
 Đối với skintone\_predict thì hàm chỉ nhận 1 ảnh làm input (skintone_predict(image))<br>
 # Kết quả huấn luyện mô hình<br>
 ## Giới tính<br>
-![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/gender/plot/gender_CNN_plot_acc.png?raw=true)<br>
+![Gender Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/gender/plot/gender_CNN_plot_acc.png)<br>
 ## Tuổi<br>
 ![Age Accuracy](https://github.com/thaivo02/Facial-recognition/blob/main/age/plot/age_CNN_plot_acc1.png?raw=true)<br>
 ## Cảm xúc<br>
