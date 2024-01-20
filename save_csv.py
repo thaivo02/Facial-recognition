@@ -17,8 +17,8 @@ from emotion.emotion_predict import predict_emotion, emo_model
 from extract_skin import extractSkin
 
 def load_image_for_pred(folder_path):
-    df = pd.DataFrame(pd.read_csv(r"D:\Python_project\answer.csv"), columns=['file_name'])
-    with open(r"D:\Python_project\file_name_to_image_id.json", 'r') as fp:
+    #df = pd.DataFrame(pd.read_csv(r"D:\Python_project\answer.csv"), columns=['file_name'])
+    with open(r"D:\Python_project\file_name_to_image_id(1).json", 'r') as fp:
         data = json.load(fp)
     #id_by_name = dict([(p['file_name'], p['id']) for p in data['images']])
     id_by_name = data
@@ -31,15 +31,16 @@ def load_image_for_pred(folder_path):
     emotion_model = emo_model("other_files\\facial_expression_model_weights.h5")
 
     # Write header of csv
-    with open(r"D:\Python_project\answer\answer_public_test.csv", 'w', newline='') as f_object:
+    with open(r"D:\Python_project\answer\answer_private_test.csv", 'w', newline='') as f_object:
         writer_object = csv.writer(f_object)
         writer_object.writerow(['file_name','bbox','image_id','race','age','emotion','gender','skintone','masked'])
-        for ind  in df.index:
+        #for ind  in df.index:
+        for ind in os.listdir(folder_path):
             try:
                 start_time = time.time()
                 #_ = data[df['file_name'][ind]] #test if detect face
 
-                path = os.path.join(folder_path,df['file_name'][ind])
+                path = os.path.join(folder_path,ind)
                 img = cv2.imread(path)
                 faces = get_face(img, 0.9)
                 if len(faces)==0:
@@ -60,17 +61,17 @@ def load_image_for_pred(folder_path):
                                                 faces = get_face(img, 0.1)
                 for face in faces:
                     csv_list = []
-                    print("Load image No." + str(id_by_name[df['file_name'][ind]]) + "; File: "+ path)
+                    print("Load image No." + str(ind) + "; File: "+ path)
                     
                     # predict
                     img_resized = np.array([cv2.resize(face[0], (64,64))])
-                    file_name = df['file_name'][ind]
-                    img_id = id_by_name[df['file_name'][ind]]
+                    file_name = ind
+                    img_id = id_by_name[ind]
                     bbox = face[1]
                     race = predict_race(img_resized, race_model)
                     age = predict_age(img_resized, age_model)
                     emo = predict_emotion(cv2.cvtColor(cv2.resize(face[0], (48,48)), cv2.COLOR_BGR2GRAY).reshape(-1, 48,48, 1) , emotion_model)
-                    gender = predict_gender(face[0], gender_model)
+                    gender = predict_gender(img_resized, gender_model)
                     skintone = predict_skintone(face[0])
                     mask = predict_mask(np.array([cv2.resize(face[0], (128,128))]), mask_model)
 
@@ -132,4 +133,4 @@ def load_image_for_pred(folder_path):
 
         #prediction_ = pd.DataFrame(predictions, columns=['predictions']).to_csv('prediction.csv')
 
-load_image_for_pred(r"D:\Python_project\public_test\public_test")
+load_image_for_pred(r"D:\Python_project\private_test_data\private_test_data")
